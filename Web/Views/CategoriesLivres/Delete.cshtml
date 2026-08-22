@@ -1,0 +1,33 @@
+@model Web.Models.CategorieLivreViewModel
+@{
+    ViewData["Title"] = "Supprimer la catégorie";
+}
+
+<h1>Supprimer la catégorie</h1>
+
+@if (TempData["Erreur"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Erreur"]</div>
+}
+
+<p class="text-danger">Confirmez-vous la suppression (logique) de cette catégorie ?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Code)</dt>
+    <dd class="col-sm-9">@Model.Code</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Libelle)</dt>
+    <dd class="col-sm-9">@Model.Libelle</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.DureeMaxJours)</dt>
+    <dd class="col-sm-9">@Model.DureeMaxJours</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.PenaliteParJour)</dt>
+    <dd class="col-sm-9">@Model.PenaliteParJour.ToString("0.00")</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <a class="btn btn-secondary" asp-action="Index">Annuler</a>
+</form>

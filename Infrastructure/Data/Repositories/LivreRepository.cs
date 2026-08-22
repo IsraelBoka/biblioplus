@@ -11,7 +11,10 @@ public class LivreRepository : Repository<Livre>, ILivreRepository
 
     public async Task<IReadOnlyList<Livre>> GetDisponiblesAsync(string? recherche, CancellationToken ct = default)
     {
-        var query = Set.Include(l => l.CategorieLivre).AsQueryable();
+        var query = Set
+            .Include(l => l.CategorieLivre)
+            .Include(l => l.Exemplaires)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(recherche))
         {

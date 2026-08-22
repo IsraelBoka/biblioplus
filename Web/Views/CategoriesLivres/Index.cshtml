@@ -1,0 +1,52 @@
+@model IEnumerable<Web.Models.CategorieLivreViewModel>
+@{
+    ViewData["Title"] = "Catégories de livres";
+}
+
+<h1>Catégories de livres</h1>
+
+@if (TempData["Message"] is not null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Erreur"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Erreur"]</div>
+}
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Nouvelle catégorie</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Libellé</th>
+            <th>Durée max (jours)</th>
+            <th>Pénalité / jour</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Code</td>
+            <td>@item.Libelle</td>
+            <td>@item.DureeMaxJours</td>
+            <td>@item.PenaliteParJour.ToString("0.00")</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Détails</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id">Modifier</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Supprimer</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Aucune catégorie pour le moment.</p>
+}

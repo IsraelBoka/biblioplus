@@ -1,0 +1,131 @@
+### BiblioPlus — requêtes de démonstration reproductibles
+### Lancer l'Api : dotnet run --project Api/Api.csproj --launch-profile http
+### (base de données fraîche recommandée pour rejouer la séquence dans l'ordre)
+
+@Api = http://localhost:5188
+
+########################################################################
+## RÉFÉRENTIEL — CategorieLivre (CRUD)
+########################################################################
+
+### 1) Création VALIDE -> 201 Created (+ en-tête Location)
+# @name creerCategorie
+POST {{Api}}/api/categories-livres
+Content-Type: application/json
+
+{
+  "code": "INFO",
+  "libelle": "Informatique",
+  "dureeMaxJours": 30,
+  "penaliteParJour": 1.00
+}
+
+### 2) Donnée INVALIDE -> 400 Bad Request (code vide, durée hors bornes)
+POST {{Api}}/api/categories-livres
+Content-Type: application/json
+
+{
+  "code": "",
+  "libelle": "",
+  "dureeMaxJours": 0,
+  "penaliteParJour": -5
+}
+
+### 3) Identifiant INEXISTANT -> 404 Not Found
+GET {{Api}}/api/categories-livres/9999
+
+### 4) UNICITÉ violée -> 409 Conflict (le code "ROM" existe déjà dans le seed)
+POST {{Api}}/api/categories-livres
+Content-Type: application/json
+
+{
+  "code": "ROM",
+  "libelle": "Doublon",
+  "dureeMaxJours": 10,
+  "penaliteParJour": 0.5
+}
+
+### Lecture de toutes les catégories -> 200
+GET {{Api}}/api/categories-livres
+
+### Modification -> 204 No Content
+PUT {{Api}}/api/categories-livres/{{creerCategorie.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "code": "INFO",
+  "libelle": "Informatique et réseaux",
+  "dureeMaxJours": 28,
+  "penaliteParJour": 1.25
+}
+
+########################################################################
+## WORKFLOW MÉTIER — Circulation (emprunt / retour)
+########################################################################
+
+### 5a) Disponibilité (Where + Any) -> 200
+GET {{Api}}/api/livres/disponibles?recherche=etranger
+
+### 5b) Emprunt RÉUSSI -> 201 Created (adhérent 1, exemplaire 1 du seed)
+# @name emprunt
+POST {{Api}}/api/emprunts
+Content-Type: application/json
+
+{
+  "adherentId": 1,
+  "exemplaireId": 1
+}
+
+### 5c) Retour RÉUSSI -> 200 OK (libère l'exemplaire ; pénalité 0 si à l'heure)
+POST {{Api}}/api/emprunts/{{emprunt.response.body.$.empruntId}}/retour
+
+### 6a) Prépare un refus : on emprunte l'exemplaire 2 -> 201
+POST {{Api}}/api/emprunts
+Content-Type: application/json
+
+{
+  "adherentId": 1,
+  "exemplaireId": 2
+}
+
+### 6b) Workflow REFUSÉ -> 409 Conflict (exemplaire 2 déjà emprunté = règle 2)
+POST {{Api}}/api/emprunts
+Content-Type: application/json
+
+{
+  "adherentId": 1,
+  "exemplaireId": 2
+}
+
+### 6c) Emprunt sur exemplaire inexistant -> 404 Not Found
+POST {{Api}}/api/emprunts
+Content-Type: application/json
+
+{
+  "adherentId": 1,
+  "exemplaireId": 9999
+}
+
+########################################################################
+## PÉNALITÉS
+########################################################################
+
+### Régler une pénalité inexistante -> 404 Not Found
+PATCH {{Api}}/api/penalites/9999/regler
+
+### Régler une pénalité existante -> 200 OK
+### (nécessite une pénalité créée par un retour en retard ; adapter l'id)
+PATCH {{Api}}/api/penalites/1/regler
+
+########################################################################
+## SUPPRESSION LOGIQUE — preuve que la donnée est masquée
+########################################################################
+
+### 7a) Suppression REFUSÉE -> 409 (catégorie 1 = "ROM" utilisée par un livre actif)
+DELETE {{Api}}/api/categories-livres/1
+
+### 7b) Suppression LOGIQUE d'une catégorie non utilisée -> 204 (catégorie 2 = "BD")
+DELETE {{Api}}/api/categories-livres/2
+
+### 7c) Lecture après suppression logique -> 404 (la donnée est masquée)
+GET {{Api}}/api/categories-livres/2
