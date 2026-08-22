@@ -1,3 +1,5 @@
+using Application.Abstractions;
+using Application.Services;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +21,10 @@ public static class DependencyInjection
         // Un DbContext par requête (portée Scoped par défaut d'AddDbContext).
         services.AddDbContext<BiblioPlusContext>(options => options.UseSqlite(connectionString));
 
-        // Les repositories, l'IUnitOfWork et les services applicatifs seront ajoutés au Jalon 3.
+        // Unit of Work (partage le DbContext de la requête) et service métier.
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICirculationService, CirculationService>();
+
         return services;
     }
 }
