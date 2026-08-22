@@ -1,0 +1,18 @@
+## Build outputs
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+## SQLite local database (généré par les migrations / le seed)
+*.db
+*.db-shm
+*.db-wal
+
+## Rider / VS / VS Code
+.vs/
+.idea/
+*.user
+
+## macOS
+.DS_Store
