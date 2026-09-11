@@ -1,0 +1,43 @@
+@using Domain.Enums
+@model Web.Models.ExemplaireViewModel
+@{
+    ViewData["Title"] = "Nouvel exemplaire";
+}
+
+<div class="page-head"><div><h1>Nouvel exemplaire</h1></div></div>
+
+<div class="form-panel">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="CodeBarres" class="form-label"></label>
+                <input asp-for="CodeBarres" class="form-control" />
+                <span asp-validation-for="CodeBarres" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="LivreId" class="form-label"></label>
+                <select asp-for="LivreId" class="form-select"
+                        asp-items="@(ViewBag.Livres as SelectList)">
+                    <option value="">-- Choisir un livre --</option>
+                </select>
+                <span asp-validation-for="LivreId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Etat" class="form-label"></label>
+                <input asp-for="Etat" class="form-control" />
+                <span asp-validation-for="Etat" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Statut" class="form-label"></label>
+                <select asp-for="Statut" class="form-select"
+                        asp-items="Html.GetEnumSelectList<StatutExemplaire>()"></select>
+                <span asp-validation-for="Statut" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Créer</button>
+            <a class="btn btn-secondary" asp-action="Index">Annuler</a>
+        </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

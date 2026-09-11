@@ -2,10 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Common;
 
-/// <summary>
-/// Classe de base commune à toutes les entités persistées.
-/// Fournit l'identité, l'audit temporel, la suppression logique et le jeton de concurrence.
-/// </summary>
 public abstract class BaseEntity
 {
     [Key]

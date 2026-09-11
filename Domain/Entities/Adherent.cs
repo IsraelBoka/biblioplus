@@ -3,9 +3,6 @@ using Domain.Common;
 
 namespace Domain.Entities;
 
-/// <summary>
-/// Membre de la bibliothèque autorisé à emprunter des exemplaires.
-/// </summary>
 public class Adherent : BaseEntity
 {
     [Required]
@@ -19,11 +16,14 @@ public class Adherent : BaseEntity
     [MaxLength(30)]
     public string? Telephone { get; set; }
 
+    [MaxLength(150)]
+    [EmailAddress]
+    public string? Email { get; set; }
+
     public DateTime DateAdhesion { get; set; } = DateTime.UtcNow.Date;
 
     public bool Actif { get; set; } = true;
 
-    // Navigation : un adhérent réalise plusieurs emprunts et reçoit plusieurs pénalités.
     public ICollection<Emprunt> Emprunts { get; set; } = new List<Emprunt>();
     public ICollection<Penalite> Penalites { get; set; } = new List<Penalite>();
 }

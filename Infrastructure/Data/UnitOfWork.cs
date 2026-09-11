@@ -21,6 +21,8 @@ public class UnitOfWork : IUnitOfWork
         Adherents = new AdherentRepository(context);
         Emprunts = new EmpruntRepository(context);
         Penalites = new PenaliteRepository(context);
+        Parametres = new ParametresRepository(context);
+        Utilisateurs = new UtilisateurRepository(context);
     }
 
     public ICategorieLivreRepository CategoriesLivres { get; }
@@ -29,6 +31,8 @@ public class UnitOfWork : IUnitOfWork
     public IAdherentRepository Adherents { get; }
     public IEmpruntRepository Emprunts { get; }
     public IPenaliteRepository Penalites { get; }
+    public IParametresRepository Parametres { get; }
+    public IUtilisateurRepository Utilisateurs { get; }
 
     public Task<int> SaveChangesAsync(CancellationToken ct = default) => _context.SaveChangesAsync(ct);
 }

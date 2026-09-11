@@ -9,4 +9,7 @@ public interface IEmpruntRepository : IRepository<Emprunt>
 
     /// <summary>Charge un emprunt actif avec son exemplaire, son livre et la catégorie (pour le retour).</summary>
     Task<Emprunt?> GetActifAvecCategorieAsync(int empruntId, CancellationToken ct = default);
+
+    /// <summary>Emprunts d'un adhérent (avec exemplaire + livre), du plus récent au plus ancien.</summary>
+    Task<IReadOnlyList<Emprunt>> ListParAdherentAsync(int adherentId, CancellationToken ct = default);
 }

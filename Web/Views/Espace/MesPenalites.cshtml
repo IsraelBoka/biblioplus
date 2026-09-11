@@ -1,0 +1,59 @@
+@model List<Web.Models.EspacePenaliteLigne>
+@using Domain.Enums
+@{
+    ViewData["Title"] = "Mes pénalités";
+    var total = Model.Where(p => p.Etat == EtatPenalite.ARegler).Sum(p => p.Montant);
+}
+
+<div class="page-head">
+    <div>
+        <h1>Mes pénalités</h1>
+        <p class="page-head__sub">Montant restant à régler : <strong>@total.ToString("0.00") €</strong></p>
+    </div>
+</div>
+
+<div class="panel">
+    @if (Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Motif</th>
+                    <th>Date</th>
+                    <th>Montant</th>
+                    <th>État</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td class="text-muted">@p.Id</td>
+                    <td>@p.Motif</td>
+                    <td>@p.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@p.Montant.ToString("0.00") €</td>
+                    <td>
+                        @if (p.Etat == EtatPenalite.ARegler)
+                        {
+                            <span class="badge bg-danger">À régler</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Réglée</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <p class="text-muted mt-2">Le règlement des pénalités s'effectue à l'accueil de la bibliothèque.</p>
+    }
+    else
+    {
+        <div class="empty">
+            <svg class="empty__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <p>Aucune pénalité. Continuez comme ça !</p>
+        </div>
+    }
+</div>

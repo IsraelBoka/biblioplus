@@ -130,6 +130,50 @@ Détails et scénarios : `docs/Regles-metier.md`.
 
 ---
 
+## 6 bis. Authentification et espaces (Web MVC)
+
+L'application Web est protégée par une **authentification par cookie** (sans ASP.NET Identity,
+pour rester dans l'esprit « couches » du projet). Deux espaces, distingués par le **rôle** :
+
+| Espace | Rôle | Accès |
+|---|---|---|
+| **Admin** (gestion) | `Admin` | Tableau de bord, livres, exemplaires, catégories, emprunts, adhérents, pénalités, paramètres |
+| **Adhérent** (`/Espace`) | `Adherent` | Son tableau de bord, le catalogue disponible, ses emprunts, ses pénalités (lecture seule) |
+
+- Connexion : `/Compte/Connexion` · Inscription adhérent : `/Compte/Inscription` · Déconnexion : bouton dans la barre du haut.
+- Tout accès non authentifié est redirigé vers la connexion ; un rôle insuffisant mène à `/Compte/AccesRefuse`.
+- Mots de passe hachés en **PBKDF2 (SHA-256, 100 000 itérations)** — voir `Infrastructure/Security/Pbkdf2PasswordHasher.cs`.
+
+**Comptes de démonstration** (créés par le seed) :
+
+| Rôle | E-mail | Mot de passe |
+|---|---|---|
+| Admin | `admin@biblioplus.local` | `Admin123!` |
+| Adhérent | `marie@biblioplus.local` | `Membre123!` |
+
+### Alertes e-mail (SMTP Gmail)
+
+Abstraction `IEmailSender` (couche Application) + implémentation SMTP `SmtpEmailSender`
+(couche Infrastructure). Trois alertes **best-effort** (une panne SMTP ne bloque jamais la règle métier) :
+confirmation d'emprunt, pénalité de retard, e-mail de bienvenue à l'inscription.
+
+Configuration via un fichier **`.env`** à la racine de la solution (copier `.env.example`) :
+
+```dotenv
+EMAIL__ENABLED=false                       # true pour envoyer réellement
+EMAIL__HOST=smtp.gmail.com
+EMAIL__PORT=587
+EMAIL__ENABLESSL=true
+EMAIL__USER=votre-adresse@gmail.com
+EMAIL__PASSWORD=mot-de-passe-application    # « mot de passe d'application » Gmail (16 car.)
+EMAIL__FROM=BiblioPlus <votre-adresse@gmail.com>
+```
+
+Tant que `EMAIL__ENABLED=false`, les envois sont seulement **journalisés** (aucun mail réel) :
+pratique en démo. Le `.env` n'est **pas** versionné (seul `.env.example` l'est).
+
+---
+
 ## 7. Scénario de démonstration (via `Api/BiblioPlus.http` ou Swagger)
 
 1. `POST /api/categories-livres` (valide) → **201** + `Location`.
@@ -150,7 +194,9 @@ Toutes ces étapes ont été rejouées et vérifiées (voir le tableau de preuve
   auto-géré par SQLite (colonne présente mais non incrémentée).
 - La recherche `LIKE` de SQLite n'est **pas accent-insensible** : « etranger » ne matche pas
   « L'**É**tranger » (« camus », « tranger » fonctionnent).
-- Périmètre volontairement limité au socle : pas de réservation, paiement, e-mail, PDF, etc.
+- Périmètre volontairement limité au socle : pas de réservation, paiement, PDF, etc.
+  (l'**authentification par cookie**, les **espaces admin/adhérent** et les **alertes e-mail SMTP**
+  ont été ajoutés — voir §6 bis).
 
 Choix et difficultés détaillés : `docs/Notes-choix-difficultes.md`.
 

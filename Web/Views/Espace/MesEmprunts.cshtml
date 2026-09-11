@@ -1,0 +1,63 @@
+@model List<Web.Models.EspaceEmpruntLigne>
+@{
+    ViewData["Title"] = "Mes emprunts";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Mes emprunts</h1>
+        <p class="page-head__sub">Historique et emprunts en cours.</p>
+    </div>
+</div>
+
+<div class="panel">
+    @if (Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Livre</th>
+                    <th>Emprunt</th>
+                    <th>Échéance</th>
+                    <th>Retour</th>
+                    <th>État</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td class="text-muted">@e.Id</td>
+                    <td>@e.LivreTitre</td>
+                    <td>@e.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                    <td>@e.DateEcheance.ToString("dd/MM/yyyy")</td>
+                    <td>@(e.DateRetour?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td>
+                        @if (!e.EstActif)
+                        {
+                            <span class="badge bg-secondary">Rendu</span>
+                        }
+                        else if (e.EnRetard)
+                        {
+                            <span class="badge bg-danger">En retard</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">En cours</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <svg class="empty__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            <p>Vous n'avez aucun emprunt pour le moment.</p>
+            <a class="btn btn-primary btn-sm" asp-controller="Espace" asp-action="Catalogue">Parcourir le catalogue</a>
+        </div>
+    }
+</div>

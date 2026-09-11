@@ -1,28 +1,47 @@
+using Application.Abstractions;
 using Infrastructure;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+// Charge le fichier .env (SMTP Gmail, etc.) en variables d'environnement avant la configuration.
+DotEnv.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Reprend les variables d'environnement (dont celles issues du .env) dans la configuration.
+builder.Configuration.AddEnvironmentVariables();
+
 builder.Services.AddControllersWithViews();
 
-// Couche d'infrastructure (DbContext SQLite partagé + UoW + services).
 builder.Services.AddBiblioPlusPersistence(builder.Configuration);
+
+// Authentification par cookie : espace admin et espace adhérent partagent le même schéma,
+// la distinction se fait par le rôle (claim Role) porté par chaque compte.
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Compte/Connexion";
+        options.LogoutPath = "/Compte/Deconnexion";
+        options.AccessDeniedPath = "/Compte/AccesRefuse";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Assure la présence de la base (migrations + seed) même si le Web est lancé seul.
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BiblioPlusContext>();
-    await BiblioPlusSeeder.SeedAsync(context);
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+    await BiblioPlusSeeder.SeedAsync(context, hasher);
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -31,6 +50,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

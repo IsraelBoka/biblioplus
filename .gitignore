@@ -16,3 +16,6 @@ obj/
 
 ## macOS
 .DS_Store
+
+## Variables d'environnement (secrets SMTP, etc.) — .env.example reste versionné
+.env

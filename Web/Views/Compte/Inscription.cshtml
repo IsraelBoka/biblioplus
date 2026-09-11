@@ -1,0 +1,53 @@
+@model Web.Models.InscriptionViewModel
+@{
+    ViewData["Title"] = "Inscription";
+    Layout = "_LayoutAuth";
+}
+
+<h1 class="auth__title">Créer un compte</h1>
+<p class="auth__sub">Rejoignez BiblioPlus en tant qu'adhérent.</p>
+
+<form asp-controller="Compte" asp-action="Inscription" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+    <div class="mb-3">
+        <label asp-for="Nom" class="form-label"></label>
+        <input asp-for="Nom" class="form-control" autofocus />
+        <span asp-validation-for="Nom" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" autocomplete="email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Telephone" class="form-label"></label>
+        <input asp-for="Telephone" class="form-control" />
+        <span asp-validation-for="Telephone" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MotDePasse" class="form-label"></label>
+        <input asp-for="MotDePasse" class="form-control" autocomplete="new-password" />
+        <span asp-validation-for="MotDePasse" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Confirmation" class="form-label"></label>
+        <input asp-for="Confirmation" class="form-control" autocomplete="new-password" />
+        <span asp-validation-for="Confirmation" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Créer mon compte</button>
+</form>
+
+<p class="auth__foot">
+    Déjà inscrit ?
+    <a asp-controller="Compte" asp-action="Connexion">Se connecter</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

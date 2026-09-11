@@ -1,0 +1,91 @@
+@model IEnumerable<Web.Models.EmpruntViewModel>
+@{
+    ViewData["Title"] = "Emprunts";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Emprunts</h1>
+        <p class="page-head__sub">Circulation : emprunter, suivre les échéances et retourner.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvel emprunt
+    </a>
+</div>
+
+@if (TempData["Message"] is not null)
+{
+    <div class="alert alert-success mb-3">@TempData["Message"]</div>
+}
+@if (TempData["Erreur"] is not null)
+{
+    <div class="alert alert-danger mb-3">@TempData["Erreur"]</div>
+}
+
+@if (Model.Any())
+{
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Adhérent</th>
+                    <th>Livre</th>
+                    <th>Exemplaire</th>
+                    <th>Emprunt</th>
+                    <th>Échéance</th>
+                    <th>Retour</th>
+                    <th>État</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-muted">@item.Id</td>
+                    <td>@item.AdherentNom</td>
+                    <td><strong>@item.LivreTitre</strong></td>
+                    <td class="text-muted">@item.ExemplaireCodeBarres</td>
+                    <td>@item.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                    <td>@item.DateEcheance.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.DateRetour?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td>
+                        @if (!item.EstActif)
+                        {
+                            <span class="badge bg-secondary">Rendu</span>
+                        }
+                        else if (item.EnRetard)
+                        {
+                            <span class="badge bg-danger">En retard</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">En cours</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.EstActif)
+                        {
+                            <form asp-action="Retourner" asp-route-id="@item.Id" method="post"
+                                  onsubmit="return confirm('Confirmer le retour de cet exemplaire ?');">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Retourner</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <div class="empty">
+            <p>Aucun emprunt pour le moment.</p>
+            <a class="btn btn-primary btn-sm" asp-action="Create">Enregistrer un emprunt</a>
+        </div>
+    </div>
+}

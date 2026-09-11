@@ -5,10 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-/// <summary>
-/// Unique DbContext de la solution. Configuré via Fluent API (assembly de configurations),
-/// avec un filtre global de suppression logique et une gestion automatique de l'audit.
-/// </summary>
 public class BiblioPlusContext : DbContext
 {
     public BiblioPlusContext(DbContextOptions<BiblioPlusContext> options) : base(options)
@@ -21,6 +17,8 @@ public class BiblioPlusContext : DbContext
     public DbSet<Adherent> Adherents => Set<Adherent>();
     public DbSet<Emprunt> Emprunts => Set<Emprunt>();
     public DbSet<Penalite> Penalites => Set<Penalite>();
+    public DbSet<ParametresCirculation> ParametresCirculation => Set<ParametresCirculation>();
+    public DbSet<Utilisateur> Utilisateurs => Set<Utilisateur>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

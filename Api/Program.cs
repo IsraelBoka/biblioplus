@@ -1,7 +1,12 @@
+using Application.Abstractions;
 using Infrastructure;
 using Infrastructure.Data;
 
+// Charge le fichier .env (SMTP Gmail, etc.) avant la configuration.
+DotEnv.Load();
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 
@@ -19,7 +24,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BiblioPlusContext>();
-    await BiblioPlusSeeder.SeedAsync(context);
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+    await BiblioPlusSeeder.SeedAsync(context, hasher);
 }
 
 // Configure the HTTP request pipeline.

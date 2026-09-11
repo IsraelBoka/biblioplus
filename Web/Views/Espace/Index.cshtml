@@ -1,0 +1,107 @@
+@model Web.Models.EspaceDashboardViewModel
+@{
+    ViewData["Title"] = "Mon espace";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Bonjour @Model.Nom</h1>
+        <p class="page-head__sub">Adhérent @Model.Numero · voici un résumé de votre activité.</p>
+    </div>
+    <a class="btn btn-primary" asp-controller="Espace" asp-action="Catalogue">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Parcourir le catalogue
+    </a>
+</div>
+
+@if (TempData["Erreur"] is string err)
+{
+    <div class="alert alert-warning">@err</div>
+}
+@if (TempData["Message"] is string msg)
+{
+    <div class="alert alert-success">@msg</div>
+}
+
+<div class="stat-grid">
+    <div class="stat">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div class="stat__value">@Model.EmpruntsActifs</div>
+        <div class="stat__label">Emprunts en cours</div>
+        <div class="stat__hint">à rendre en temps voulu</div>
+    </div>
+
+    <div class="stat @(Model.EmpruntsEnRetard > 0 ? "stat--warn" : "")">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat__value">@Model.EmpruntsEnRetard</div>
+        <div class="stat__label">En retard</div>
+        <div class="stat__hint">échéance dépassée</div>
+    </div>
+
+    <div class="stat @(Model.PenalitesARegler > 0 ? "stat--danger" : "")">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="stat__value">@Model.PenalitesARegler</div>
+        <div class="stat__label">Pénalités à régler</div>
+        <div class="stat__hint">@Model.MontantDu.ToString("0.00") € au total</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel__head">
+        <h2>Mes derniers emprunts</h2>
+        <a class="btn btn-outline-secondary btn-sm" asp-controller="Espace" asp-action="MesEmprunts">Tout voir</a>
+    </div>
+    @if (Model.DerniersEmprunts.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Livre</th>
+                    <th>Emprunt</th>
+                    <th>Échéance</th>
+                    <th>État</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var e in Model.DerniersEmprunts)
+            {
+                <tr>
+                    <td class="text-muted">@e.Id</td>
+                    <td>@e.LivreTitre</td>
+                    <td>@e.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                    <td>@e.DateEcheance.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @if (!e.EstActif)
+                        {
+                            <span class="badge bg-secondary">Rendu</span>
+                        }
+                        else if (e.EnRetard)
+                        {
+                            <span class="badge bg-danger">En retard</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">En cours</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <svg class="empty__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <p>Vous n'avez pas encore d'emprunt.</p>
+            <a class="btn btn-primary btn-sm" asp-controller="Espace" asp-action="Catalogue">Parcourir le catalogue</a>
+        </div>
+    }
+</div>

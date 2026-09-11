@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Accès refusé";
+    Layout = "_LayoutAuth";
+}
+
+<h1 class="auth__title">Accès refusé</h1>
+<p class="auth__sub">Votre compte n'a pas les droits nécessaires pour accéder à cette page.</p>
+
+<div class="d-grid gap-2">
+    <a class="btn btn-primary" asp-controller="Espace" asp-action="Index">Aller à mon espace</a>
+    <form asp-controller="Compte" asp-action="Deconnexion" method="post">
+        <button type="submit" class="btn btn-outline-secondary w-100">Changer de compte</button>
+    </form>
+</div>

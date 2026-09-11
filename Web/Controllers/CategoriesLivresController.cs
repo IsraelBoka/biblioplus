@@ -1,6 +1,7 @@
 using Application.Abstractions;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Web.Models;
 
 namespace Web.Controllers;
@@ -8,6 +9,7 @@ namespace Web.Controllers;
 /// <summary>
 /// CRUD MVC du référentiel CategorieLivre. Passe par IUnitOfWork (jamais EF Core directement).
 /// </summary>
+[Authorize(Roles = "Admin")]
 public class CategoriesLivresController : Controller
 {
     private readonly IUnitOfWork _uow;

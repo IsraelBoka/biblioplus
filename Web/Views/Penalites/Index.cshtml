@@ -1,0 +1,89 @@
+@using Domain.Enums
+@model IEnumerable<Web.Models.PenaliteViewModel>
+@{
+    ViewData["Title"] = "Pénalités";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Pénalités</h1>
+        <p class="page-head__sub">Retards facturés automatiquement au retour d'un emprunt.</p>
+    </div>
+</div>
+
+@if (TempData["Message"] is not null)
+{
+    <div class="alert alert-success mb-3">@TempData["Message"]</div>
+}
+@if (TempData["Erreur"] is not null)
+{
+    <div class="alert alert-danger mb-3">@TempData["Erreur"]</div>
+}
+
+@if (Model.Any())
+{
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Adhérent</th>
+                    <th>Emprunt</th>
+                    <th>Motif</th>
+                    <th>Montant</th>
+                    <th>État</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-muted">@item.Id</td>
+                    <td>@item.AdherentNom</td>
+                    <td class="text-muted">#@item.EmpruntId</td>
+                    <td>@item.Motif</td>
+                    <td><strong>@item.Montant.ToString("0.00") €</strong></td>
+                    <td>
+                        @switch (item.Etat)
+                        {
+                            case EtatPenalite.ARegler:
+                                <span class="badge bg-warning">À régler</span>
+                                break;
+                            case EtatPenalite.Reglee:
+                                <span class="badge bg-success">Réglée</span>
+                                break;
+                            case EtatPenalite.Annulee:
+                                <span class="badge bg-secondary">Annulée</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        @if (item.Etat == EtatPenalite.ARegler)
+                        {
+                            <span class="row-actions">
+                                <form asp-action="Regler" asp-route-id="@item.Id" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Régler</button>
+                                </form>
+                                <form asp-action="Annuler" asp-route-id="@item.Id" method="post"
+                                      onsubmit="return confirm('Annuler cette pénalité ?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Annuler</button>
+                                </form>
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <div class="empty">
+            <svg class="empty__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <p>Aucune pénalité — tout est à jour.</p>
+        </div>
+    </div>
+}

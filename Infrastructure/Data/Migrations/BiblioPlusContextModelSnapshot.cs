@@ -35,6 +35,10 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -266,6 +270,46 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Livres");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ParametresCirculation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("BloquerSiPenalitesImpayees")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DelaiGraceJours")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("PlafondPenalite")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("QuotaEmpruntsActifs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ParametresCirculation");
+                });
+
             modelBuilder.Entity("Domain.Entities.Penalite", b =>
                 {
                     b.Property<int>("Id")
@@ -315,6 +359,63 @@ namespace Infrastructure.Data.Migrations
                         .HasFilter("IsDeleted = 0");
 
                     b.ToTable("Penalites");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Utilisateur", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Actif")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("AdherentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MotDePasseHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdherentId");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("IsDeleted = 0");
+
+                    b.ToTable("Utilisateurs");
                 });
 
             modelBuilder.Entity("Domain.Entities.Emprunt", b =>
@@ -375,6 +476,16 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Adherent");
 
                     b.Navigation("Emprunt");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Utilisateur", b =>
+                {
+                    b.HasOne("Domain.Entities.Adherent", "Adherent")
+                        .WithMany()
+                        .HasForeignKey("AdherentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Adherent");
                 });
 
             modelBuilder.Entity("Domain.Entities.Adherent", b =>

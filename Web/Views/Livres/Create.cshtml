@@ -1,0 +1,41 @@
+@model Web.Models.LivreViewModel
+@{
+    ViewData["Title"] = "Nouveau livre";
+}
+
+<div class="page-head"><div><h1>Nouveau livre</h1></div></div>
+
+<div class="form-panel">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Isbn" class="form-label"></label>
+                <input asp-for="Isbn" class="form-control" />
+                <span asp-validation-for="Isbn" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Titre" class="form-label"></label>
+                <input asp-for="Titre" class="form-control" />
+                <span asp-validation-for="Titre" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Auteur" class="form-label"></label>
+                <input asp-for="Auteur" class="form-control" />
+                <span asp-validation-for="Auteur" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CategorieLivreId" class="form-label"></label>
+                <select asp-for="CategorieLivreId" class="form-select"
+                        asp-items="@(ViewBag.Categories as SelectList)">
+                    <option value="">-- Choisir une catégorie --</option>
+                </select>
+                <span asp-validation-for="CategorieLivreId" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Créer</button>
+            <a class="btn btn-secondary" asp-action="Index">Annuler</a>
+        </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

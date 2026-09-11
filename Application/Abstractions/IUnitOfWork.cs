@@ -14,6 +14,8 @@ public interface IUnitOfWork
     IAdherentRepository Adherents { get; }
     IEmpruntRepository Emprunts { get; }
     IPenaliteRepository Penalites { get; }
+    IParametresRepository Parametres { get; }
+    IUtilisateurRepository Utilisateurs { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }

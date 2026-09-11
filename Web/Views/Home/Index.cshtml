@@ -1,29 +1,118 @@
+@model Web.Models.DashboardViewModel
 @{
-    ViewData["Title"] = "Accueil";
+    ViewData["Title"] = "Tableau de bord";
 }
 
-<div class="text-center">
-    <h1 class="display-4">BiblioPlus</h1>
-    <p class="lead">Gestion d'une bibliothèque : exemplaires, emprunts, retours et pénalités.</p>
+<div class="page-head">
+    <div>
+        <h1>Tableau de bord</h1>
+        <p class="page-head__sub">Vue d'ensemble de la circulation et du catalogue.</p>
+    </div>
+    <a class="btn btn-primary" asp-controller="Emprunts" asp-action="Create">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvel emprunt
+    </a>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Référentiel — Catégories de livres</h5>
-                <p class="card-text">CRUD complet avec suppression logique (partie MVC).</p>
-                <a class="btn btn-primary" asp-controller="CategoriesLivres" asp-action="Index">Ouvrir le référentiel</a>
-            </div>
+<div class="stat-grid">
+    <div class="stat">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         </div>
+        <div class="stat__value">@Model.NombreLivres</div>
+        <div class="stat__label">Livres au catalogue</div>
+        <div class="stat__hint">@Model.NombreExemplaires exemplaires physiques</div>
     </div>
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">API REST</h5>
-                <p class="card-text">Emprunts, retours, disponibilité et pénalités — documentés via OpenAPI.</p>
-                <a class="btn btn-outline-secondary" href="http://localhost:5188/swagger" target="_blank">Swagger de l'API</a>
-            </div>
+
+    <div class="stat stat--info">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
         </div>
+        <div class="stat__value">@Model.ExemplairesDisponibles</div>
+        <div class="stat__label">Exemplaires disponibles</div>
+        <div class="stat__hint">prêts à être empruntés</div>
     </div>
+
+    <div class="stat">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div class="stat__value">@Model.EmpruntsActifs</div>
+        <div class="stat__label">Emprunts en cours</div>
+        <div class="stat__hint">@Model.AdherentsActifs adhérents actifs</div>
+    </div>
+
+    <div class="stat @(Model.EmpruntsEnRetard > 0 ? "stat--warn" : "")">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat__value">@Model.EmpruntsEnRetard</div>
+        <div class="stat__label">Emprunts en retard</div>
+        <div class="stat__hint">échéance dépassée</div>
+    </div>
+
+    <div class="stat @(Model.PenalitesARegler > 0 ? "stat--danger" : "")">
+        <div class="stat__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="stat__value">@Model.PenalitesARegler</div>
+        <div class="stat__label">Pénalités à régler</div>
+        <div class="stat__hint">@Model.MontantPenalitesARegler.ToString("0.00") € au total</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel__head">
+        <h2>Derniers emprunts</h2>
+        <a class="btn btn-outline-secondary btn-sm" asp-controller="Emprunts" asp-action="Index">Tout voir</a>
+    </div>
+    @if (Model.DerniersEmprunts.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Adhérent</th>
+                    <th>Livre</th>
+                    <th>Emprunt</th>
+                    <th>Échéance</th>
+                    <th>État</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var e in Model.DerniersEmprunts)
+            {
+                <tr>
+                    <td class="text-muted">@e.Id</td>
+                    <td>@e.AdherentNom</td>
+                    <td>@e.LivreTitre</td>
+                    <td>@e.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                    <td>@e.DateEcheance.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @if (!e.EstActif)
+                        {
+                            <span class="badge bg-secondary">Rendu</span>
+                        }
+                        else if (e.EnRetard)
+                        {
+                            <span class="badge bg-danger">En retard</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">En cours</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            <svg class="empty__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <p>Aucun emprunt enregistré pour le moment.</p>
+            <a class="btn btn-primary btn-sm" asp-controller="Emprunts" asp-action="Create">Créer un emprunt</a>
+        </div>
+    }
 </div>

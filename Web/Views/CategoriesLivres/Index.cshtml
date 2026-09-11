@@ -3,50 +3,66 @@
     ViewData["Title"] = "Catégories de livres";
 }
 
-<h1>Catégories de livres</h1>
+<div class="page-head">
+    <div>
+        <h1>Catégories</h1>
+        <p class="page-head__sub">Référentiel : durée d'emprunt et pénalité journalière.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvelle catégorie
+    </a>
+</div>
 
 @if (TempData["Message"] is not null)
 {
-    <div class="alert alert-success">@TempData["Message"]</div>
+    <div class="alert alert-success mb-3">@TempData["Message"]</div>
 }
 @if (TempData["Erreur"] is not null)
 {
-    <div class="alert alert-danger">@TempData["Erreur"]</div>
+    <div class="alert alert-danger mb-3">@TempData["Erreur"]</div>
 }
 
-<p>
-    <a class="btn btn-primary" asp-action="Create">Nouvelle catégorie</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Code</th>
-            <th>Libellé</th>
-            <th>Durée max (jours)</th>
-            <th>Pénalité / jour</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.Code</td>
-            <td>@item.Libelle</td>
-            <td>@item.DureeMaxJours</td>
-            <td>@item.PenaliteParJour.ToString("0.00")</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Détails</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Modifier</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Supprimer</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
-
-@if (!Model.Any())
+@if (Model.Any())
 {
-    <p class="text-muted">Aucune catégorie pour le moment.</p>
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Libellé</th>
+                    <th>Durée max</th>
+                    <th>Pénalité / jour</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.Code</strong></td>
+                    <td>@item.Libelle</td>
+                    <td>@item.DureeMaxJours jours</td>
+                    <td>@item.PenaliteParJour.ToString("0.00") €</td>
+                    <td>
+                        <span class="row-actions">
+                            <a asp-action="Details" asp-route-id="@item.Id">Détails</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Modifier</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id">Supprimer</a>
+                        </span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <div class="empty">
+            <p>Aucune catégorie pour le moment.</p>
+            <a class="btn btn-primary btn-sm" asp-action="Create">Créer la première catégorie</a>
+        </div>
+    </div>
 }

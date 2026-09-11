@@ -1,0 +1,65 @@
+@model Web.Models.ParametreViewModel
+@{
+    ViewData["Title"] = "Paramètres";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Paramètres de circulation</h1>
+        <p class="page-head__sub">Modalités globales appliquées à chaque emprunt et à chaque retour.</p>
+    </div>
+</div>
+
+@if (TempData["Message"] is not null)
+{
+    <div class="alert alert-success mb-3">@TempData["Message"]</div>
+}
+
+<div class="form-panel">
+    <form asp-action="Index">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+        <div class="form-section">
+            <div class="form-section-title">Emprunt</div>
+
+            <div class="mb-3">
+                <label asp-for="QuotaEmpruntsActifs" class="form-label"></label>
+                <input asp-for="QuotaEmpruntsActifs" class="form-control" />
+                <p class="form-help">Nombre maximum d'emprunts actifs simultanés autorisés par adhérent.</p>
+                <span asp-validation-for="QuotaEmpruntsActifs" class="text-danger"></span>
+            </div>
+
+            <div class="mb-1 form-check form-switch">
+                <input asp-for="BloquerSiPenalitesImpayees" class="form-check-input" role="switch" />
+                <label asp-for="BloquerSiPenalitesImpayees" class="form-check-label"></label>
+            </div>
+            <p class="form-help">Si activé, un adhérent ayant des pénalités non réglées ne peut pas emprunter.</p>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-title">Retour</div>
+
+            <div class="mb-3">
+                <label asp-for="DelaiGraceJours" class="form-label"></label>
+                <input asp-for="DelaiGraceJours" class="form-control" />
+                <p class="form-help">Jours de tolérance après l'échéance avant qu'une pénalité s'applique. 0 = pénalité dès le premier jour de retard.</p>
+                <span asp-validation-for="DelaiGraceJours" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PlafondPenalite" class="form-label"></label>
+                <input asp-for="PlafondPenalite" class="form-control" />
+                <p class="form-help">Montant maximum d'une pénalité par emprunt. 0 = aucun plafond. Le tarif journalier reste défini par catégorie.</p>
+                <span asp-validation-for="PlafondPenalite" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Enregistrer les paramètres</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

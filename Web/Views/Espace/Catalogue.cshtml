@@ -1,0 +1,58 @@
+@model List<Web.Models.EspaceCatalogueLigne>
+@{
+    ViewData["Title"] = "Catalogue";
+    var recherche = ViewData["Recherche"] as string;
+}
+
+<div class="page-head">
+    <div>
+        <h1>Catalogue</h1>
+        <p class="page-head__sub">Les ouvrages actuellement disponibles à l'emprunt.</p>
+    </div>
+</div>
+
+<div class="panel">
+    <form method="get" asp-controller="Espace" asp-action="Catalogue" class="d-flex gap-2 mb-3">
+        <input type="text" name="recherche" value="@recherche" class="form-control" placeholder="Titre, auteur ou ISBN…" />
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+        @if (!string.IsNullOrWhiteSpace(recherche))
+        {
+            <a class="btn btn-outline-secondary" asp-controller="Espace" asp-action="Catalogue">Réinitialiser</a>
+        }
+    </form>
+
+    @if (Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Auteur</th>
+                    <th>Catégorie</th>
+                    <th>ISBN</th>
+                    <th>Disponibles</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var l in Model)
+            {
+                <tr>
+                    <td>@l.Titre</td>
+                    <td>@l.Auteur</td>
+                    <td>@l.Categorie</td>
+                    <td class="text-muted">@l.Isbn</td>
+                    <td><span class="badge bg-success">@l.ExemplairesDisponibles</span></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <p class="text-muted mt-2">Pour emprunter un ouvrage, présentez-vous à l'accueil de la bibliothèque.</p>
+    }
+    else
+    {
+        <div class="empty">
+            <svg class="empty__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <p>Aucun ouvrage disponible ne correspond à votre recherche.</p>
+        </div>
+    }
+</div>

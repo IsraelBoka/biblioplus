@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.Contracts;
 
-/// <summary>DTO de réponse : jamais l'entité EF Core directement.</summary>
 public record CategorieLivreResponse(
     int Id,
     string Code,
@@ -10,7 +9,6 @@ public record CategorieLivreResponse(
     int DureeMaxJours,
     decimal PenaliteParJour);
 
-/// <summary>DTO de création.</summary>
 public class CreateCategorieLivreRequest
 {
     [Required, MaxLength(20)]
@@ -26,7 +24,6 @@ public class CreateCategorieLivreRequest
     public decimal PenaliteParJour { get; set; }
 }
 
-/// <summary>DTO de modification.</summary>
 public class UpdateCategorieLivreRequest
 {
     [Required, MaxLength(20)]

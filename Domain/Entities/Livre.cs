@@ -3,10 +3,6 @@ using Domain.Common;
 
 namespace Domain.Entities;
 
-/// <summary>
-/// Œuvre du catalogue. Un livre appartient à une catégorie et possède
-/// un ou plusieurs exemplaires physiques.
-/// </summary>
 public class Livre : BaseEntity
 {
     [Required]

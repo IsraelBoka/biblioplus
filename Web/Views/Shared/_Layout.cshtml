@@ -1,49 +1,148 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    string Active(params string[] names) =>
+        names.Contains(controller, StringComparer.OrdinalIgnoreCase) ? "active" : "";
+    var estAdmin = User.IsInRole("Admin");
+    var estAdherent = User.IsInRole("Adherent");
+    var nomUtilisateur = User.Identity?.Name;
+}
+<!DOCTYPE html>
+<html lang="fr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BiblioPlus</title>
+    <title>@ViewData["Title"] · BiblioPlus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BiblioPlus</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="CategoriesLivres" asp-action="Index">Catégories de livres</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+    <div class="app">
+        <div class="sidebar__backdrop" data-nav-close></div>
+        <aside class="sidebar" id="sidebar">
+            <a class="sidebar__brand" asp-controller="Home" asp-action="Index">
+                <span class="sidebar__logo">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </span>
+                <span><b>Biblio</b>Plus</span>
+            </a>
+
+            <nav class="sidebar__nav">
+                @if (estAdmin)
+                {
+                <div class="sidebar__group">
+                    <a class="nav-link side-link @Active("Home")" asp-controller="Home" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                        Tableau de bord
+                    </a>
                 </div>
+
+                <div class="sidebar__group">
+                    <div class="sidebar__label">Catalogue</div>
+                    <a class="nav-link side-link @Active("Livres")" asp-controller="Livres" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        Livres
+                    </a>
+                    <a class="nav-link side-link @Active("Exemplaires")" asp-controller="Exemplaires" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+                        Exemplaires
+                    </a>
+                    <a class="nav-link side-link @Active("CategoriesLivres")" asp-controller="CategoriesLivres" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        Catégories
+                    </a>
+                </div>
+
+                <div class="sidebar__group">
+                    <div class="sidebar__label">Circulation</div>
+                    <a class="nav-link side-link @Active("Emprunts")" asp-controller="Emprunts" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                        Emprunts
+                    </a>
+                    <a class="nav-link side-link @Active("Adherents")" asp-controller="Adherents" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Adhérents
+                    </a>
+                    <a class="nav-link side-link @Active("Penalites")" asp-controller="Penalites" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Pénalités
+                    </a>
+                </div>
+
+                <div class="sidebar__group">
+                    <div class="sidebar__label">Système</div>
+                    <a class="nav-link side-link @Active("Parametres")" asp-controller="Parametres" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        Paramètres
+                    </a>
+                </div>
+                }
+
+                @if (estAdherent)
+                {
+                <div class="sidebar__group">
+                    <a class="nav-link side-link @Active("Espace")" asp-controller="Espace" asp-action="Index">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                        Mon espace
+                    </a>
+                </div>
+                <div class="sidebar__group">
+                    <div class="sidebar__label">Bibliothèque</div>
+                    <a class="nav-link side-link @(controller.Equals("Espace", StringComparison.OrdinalIgnoreCase) && (ViewContext.RouteData.Values["action"]?.ToString() ?? "") == "Catalogue" ? "active" : "")" asp-controller="Espace" asp-action="Catalogue">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        Catalogue
+                    </a>
+                    <a class="nav-link side-link @((ViewContext.RouteData.Values["action"]?.ToString() ?? "") == "MesEmprunts" ? "active" : "")" asp-controller="Espace" asp-action="MesEmprunts">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                        Mes emprunts
+                    </a>
+                    <a class="nav-link side-link @((ViewContext.RouteData.Values["action"]?.ToString() ?? "") == "MesPenalites" ? "active" : "")" asp-controller="Espace" asp-action="MesPenalites">
+                        <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Mes pénalités
+                    </a>
+                </div>
+                }
+            </nav>
+
+            <div class="sidebar__foot">
+                API REST · <a href="http://localhost:5188/swagger" target="_blank" rel="noopener">Swagger</a>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        </aside>
+
+        <div class="app-main">
+            <header class="topbar">
+                <button class="nav-toggle" type="button" data-nav-toggle aria-label="Ouvrir le menu">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <span class="topbar__crumb">BiblioPlus</span>
+                <span class="topbar__crumb">/</span>
+                <span class="topbar__title">@(ViewData["Title"] ?? "Tableau de bord")</span>
+                <span class="topbar__spacer"></span>
+                <span class="topbar__meta">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    @DateTime.Now.ToString("dddd d MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
+                </span>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="topbar__meta" title="@(estAdmin ? "Administrateur" : "Adhérent")">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        @nomUtilisateur
+                    </span>
+                    <form asp-controller="Compte" asp-action="Deconnexion" method="post" class="topbar__logout">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Déconnexion</button>
+                    </form>
+                }
+            </header>
+
+            <main class="content">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,6 +1,5 @@
 namespace Domain.Enums;
 
-/// <summary>Cycle de vie d'un exemplaire physique.</summary>
 public enum StatutExemplaire
 {
     Disponible = 0,

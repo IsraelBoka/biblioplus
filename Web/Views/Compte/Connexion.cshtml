@@ -1,0 +1,42 @@
+@model Web.Models.ConnexionViewModel
+@{
+    ViewData["Title"] = "Connexion";
+    Layout = "_LayoutAuth";
+}
+
+<h1 class="auth__title">Connexion</h1>
+<p class="auth__sub">Accédez à votre espace BiblioPlus.</p>
+
+<form asp-controller="Compte" asp-action="Connexion" method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" autocomplete="username" autofocus />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MotDePasse" class="form-label"></label>
+        <input asp-for="MotDePasse" class="form-control" autocomplete="current-password" />
+        <span asp-validation-for="MotDePasse" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+</form>
+
+<p class="auth__foot">
+    Pas encore de compte ?
+    <a asp-controller="Compte" asp-action="Inscription">Créer un compte adhérent</a>
+</p>
+
+<div class="auth__hint">
+    <strong>Comptes de démo :</strong><br />
+    Admin — <code>admin@biblioplus.local</code> / <code>Admin123!</code><br />
+    Adhérent — <code>marie@biblioplus.local</code> / <code>Membre123!</code>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

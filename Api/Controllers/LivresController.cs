@@ -13,7 +13,6 @@ public class LivresController : ControllerBase
 
     public LivresController(IUnitOfWork uow) => _uow = uow;
 
-    /// <summary>Livres possédant au moins un exemplaire disponible, filtrés par recherche.</summary>
     [HttpGet("disponibles")]
     public async Task<ActionResult<IEnumerable<LivreDisponibleResponse>>> GetDisponibles(
         [FromQuery] string? recherche, CancellationToken ct)

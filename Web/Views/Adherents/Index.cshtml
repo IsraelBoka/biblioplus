@@ -1,0 +1,79 @@
+@model IEnumerable<Web.Models.AdherentViewModel>
+@{
+    ViewData["Title"] = "Adhérents";
+}
+
+<div class="page-head">
+    <div>
+        <h1>Adhérents</h1>
+        <p class="page-head__sub">Membres autorisés à emprunter des exemplaires.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvel adhérent
+    </a>
+</div>
+
+@if (TempData["Message"] is not null)
+{
+    <div class="alert alert-success mb-3">@TempData["Message"]</div>
+}
+@if (TempData["Erreur"] is not null)
+{
+    <div class="alert alert-danger mb-3">@TempData["Erreur"]</div>
+}
+
+@if (Model.Any())
+{
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Adhésion</th>
+                    <th>Statut</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.Numero</strong></td>
+                    <td>@item.Nom</td>
+                    <td class="text-muted">@(string.IsNullOrWhiteSpace(item.Telephone) ? "—" : item.Telephone)</td>
+                    <td>@item.DateAdhesion.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @if (item.Actif)
+                        {
+                            <span class="badge bg-success">Actif</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inactif</span>
+                        }
+                    </td>
+                    <td>
+                        <span class="row-actions">
+                            <a asp-action="Details" asp-route-id="@item.Id">Détails</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Modifier</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id">Supprimer</a>
+                        </span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <div class="empty">
+            <p>Aucun adhérent pour le moment.</p>
+            <a class="btn btn-primary btn-sm" asp-action="Create">Ajouter un adhérent</a>
+        </div>
+    </div>
+}

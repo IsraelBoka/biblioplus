@@ -1,0 +1,30 @@
+@model Web.Models.AdherentViewModel
+@{
+    ViewData["Title"] = "Supprimer l'adhérent";
+}
+
+<h1>Supprimer l'adhérent</h1>
+
+@if (TempData["Erreur"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Erreur"]</div>
+}
+
+<p class="text-danger">Confirmez-vous la suppression (logique) de cet adhérent ?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Numero)</dt>
+    <dd class="col-sm-9">@Model.Numero</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Nom)</dt>
+    <dd class="col-sm-9">@Model.Nom</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Telephone)</dt>
+    <dd class="col-sm-9">@Model.Telephone</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <a class="btn btn-secondary" asp-action="Index">Annuler</a>
+</form>
