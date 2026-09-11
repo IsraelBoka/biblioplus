@@ -574,3 +574,51 @@ dl.row > dd:last-of-type { border-bottom: none; }
 .topbar__logout {
     margin: 0 0 0 0.35rem;
 }
+
+/* Quick demo login on the auth page */
+.auth__demo {
+    margin-top: 1.25rem;
+    padding-top: 1.1rem;
+    border-top: 1px dashed var(--border-strong);
+}
+
+.auth__demo-head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.7rem;
+}
+
+.auth__demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+}
+
+.auth__demo-grid .btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.55rem 0.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.auth__demo-id {
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: var(--muted);
+}
+
+.auth__demo-note {
+    margin: 0.7rem 0 0;
+    font-size: 0.74rem;
+    color: var(--muted);
+    text-align: center;
+}

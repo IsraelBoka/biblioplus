@@ -4,8 +4,8 @@ Gestion d'une bibliothèque : exemplaires physiques, emprunts, retours et pénal
 Projet individuel réalisé en **architecture en couches** (Domain / Application / Infrastructure /
 Web MVC / API REST) avec **ASP.NET Core** et **Entity Framework Core**.
 
-- **Auteur** : Israël Boka *(à ajuster si besoin)*
-- **Sujet** : BiblioPlus (voir l'énoncé et `docs/conception.md`)
+- **Auteur** : Israël Boka
+- **Sujet** : BiblioPlus
 
 ---
 
@@ -151,6 +151,10 @@ pour rester dans l'esprit « couches » du projet). Deux espaces, distingués pa
 | Admin | `admin@biblioplus.local` | `Admin123!` |
 | Adhérent | `marie@biblioplus.local` | `Membre123!` |
 
+> En **développement**, la page de connexion affiche deux boutons de **connexion rapide**
+> (Admin / Adhérent) qui connectent ces comptes en un clic, sans saisie. Ils sont
+> automatiquement désactivés hors développement.
+
 ### Alertes e-mail (SMTP Gmail)
 
 Abstraction `IEmailSender` (couche Application) + implémentation SMTP `SmtpEmailSender`
@@ -184,7 +188,7 @@ pratique en démo. Le `.env` n'est **pas** versionné (seul `.env.example` l'est
 6. `DELETE` d'une catégorie utilisée → **409** ; d'une catégorie libre → **204**,
    puis `GET` → **404** (suppression logique : la donnée est masquée).
 
-Toutes ces étapes ont été rejouées et vérifiées (voir le tableau de preuves dans `../new-readme.md`).
+Toutes ces étapes ont été rejouées et vérifiées
 
 ---
 
@@ -199,13 +203,3 @@ Toutes ces étapes ont été rejouées et vérifiées (voir le tableau de preuve
   ont été ajoutés — voir §6 bis).
 
 Choix et difficultés détaillés : `docs/Notes-choix-difficultes.md`.
-
----
-
-## 9. Points de soutenance
-
-- Sens des `ProjectReference` et interdiction des références inverses.
-- `AddScoped` / `AddDbContext` / `AddControllers` / `MapControllers`.
-- Intérêt du **DTO** ; rôle du **repository**, du **Unit of Work** et du **service**.
-- Validation de **forme** (DataAnnotations, 400) vs **règle métier** (409).
-- Codes `201 / 204 / 400 / 404 / 409` ; fonctionnement de la **suppression logique**.

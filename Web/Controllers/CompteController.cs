@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Application.Abstractions;
 using Domain.Entities;
 using Domain.Enums;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -22,12 +23,15 @@ public class CompteController : Controller
     private readonly IUnitOfWork _uow;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IEmailSender _email;
+    private readonly IWebHostEnvironment _env;
 
-    public CompteController(IUnitOfWork uow, IPasswordHasher passwordHasher, IEmailSender email)
+    public CompteController(
+        IUnitOfWork uow, IPasswordHasher passwordHasher, IEmailSender email, IWebHostEnvironment env)
     {
         _uow = uow;
         _passwordHasher = passwordHasher;
         _email = email;
+        _env = env;
     }
 
     // GET: /Compte/Connexion
@@ -62,6 +66,32 @@ public class CompteController : Controller
         {
             return Redirect(model.ReturnUrl);
         }
+        return RedirectVersEspace(utilisateur.Role);
+    }
+
+    // POST: /Compte/ConnexionRapide  (aide au test — DÉVELOPPEMENT UNIQUEMENT)
+    // Connecte en un clic l'un des comptes de démonstration, sans saisie.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConnexionRapide(string role, CancellationToken ct)
+    {
+        if (!_env.IsDevelopment())
+        {
+            return NotFound(); // désactivé hors développement
+        }
+
+        var email = role == RoleUtilisateur.Admin.ToString()
+            ? BiblioPlusSeeder.AdminEmail
+            : BiblioPlusSeeder.MembreEmail;
+
+        var utilisateur = await _uow.Utilisateurs.GetByEmailAsync(email, ct);
+        if (utilisateur is null)
+        {
+            TempData["Erreur"] = "Compte de démonstration introuvable.";
+            return RedirectToAction(nameof(Connexion));
+        }
+
+        await SignInAsync(utilisateur);
         return RedirectVersEspace(utilisateur.Role);
     }
 
